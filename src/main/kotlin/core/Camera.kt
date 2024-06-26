@@ -18,7 +18,11 @@ class Camera(pos: Vec3, up: Vec3, dir: Vec3) : GameObject(pos) {
     }
 
     fun mat4(): Mat4 {
-        val t = Mat4.translate(-position.x, -position.y, -position.z)
+        val t = Mat4.translate(
+            -Vec3.dot(_right, position),
+            -Vec3.dot(_up, position),
+            -Vec3.dot(_dir, position)
+        )
         val r = Mat4.identity();
         r.m11 = _right.x
         r.m12 = _right.y
