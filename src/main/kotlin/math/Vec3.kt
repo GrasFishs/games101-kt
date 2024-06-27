@@ -37,4 +37,8 @@ class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 0.0) {
     fun sub(v: Vec3): Vec3 {
         return Vec3(x - v.x, y - v.y, z - v.z)
     }
+
+    fun mul(n: Double): Vec3 {
+        return Vec3(x * n, y * n, z * n)
+    }
 }

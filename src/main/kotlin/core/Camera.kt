@@ -3,51 +3,47 @@ package com.grasfish.core
 import com.grasfish.math.Mat4
 import com.grasfish.math.Vec3
 
-class Camera(pos: Vec3, up: Vec3, dir: Vec3) : GameObject(pos) {
+class Camera(pos: Vec3, private var up: Vec3, tar: Vec3) : GameObject(pos) {
 
-    private var _up = Vec3()
+    private var y = Vec3()
 
-    private var _dir = Vec3()
+    private var z = Vec3()
 
-    private var _right = Vec3()
+    private var x = Vec3()
 
     init {
-        _up = up.normalize()
-        _dir = dir.normalize()
+        up = up.normalize()
+        target(tar)
         update()
     }
 
     fun mat4(): Mat4 {
         val t = Mat4.translate(
-            -Vec3.dot(_right, position),
-            -Vec3.dot(_up, position),
-            -Vec3.dot(_dir, position)
+            -position.x,
+            -position.y,
+            -position.z,
         )
         val r = Mat4.identity();
-        r.m11 = _right.x
-        r.m12 = _right.y
-        r.m13 = _right.z
-        r.m21 = _up.x
-        r.m22 = _up.y
-        r.m23 = _up.z
-        r.m31 = -_dir.x
-        r.m32 = -_dir.y
-        r.m33 = -_dir.z
+        r.m11 = x.x
+        r.m12 = x.y
+        r.m13 = x.z
+        r.m21 = y.x
+        r.m22 = y.y
+        r.m23 = y.z
+        r.m31 = z.x
+        r.m32 = z.y
+        r.m33 = z.z
 
-        return t.mul(r)
+        return r.mul(t)
     }
 
-    fun up(up: Vec3) {
-        _up = up.normalize();
-        update();
-    }
-
-    fun dir(dir: Vec3) {
-        _dir = dir.normalize();
+    fun target(target: Vec3) {
+        z = position.sub(target).normalize();
         update();
     }
 
     private fun update() {
-        _right = Vec3.cross(_dir, _up).normalize();
+        x = Vec3.cross(up, z).normalize()
+        y = Vec3.cross(z, x)
     }
 }
